@@ -44,7 +44,7 @@ namespace Asteroid
             Update();
         }
 
-        public async static void Draw()
+        public static void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
             foreach (BaseObject obj in _objs)
