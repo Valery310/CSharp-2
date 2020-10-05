@@ -7,13 +7,15 @@ using System.Threading.Tasks;
 
 namespace Asteroid
 {
-    class Asteroid : BaseObject, ICloneable
+    class Asteroid : BaseObject, ICloneable, IComparable, IComparable<Asteroid>
     {
-        public int Power { get; set; }
+        public int Power { get; set; } = 3;
+
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
             Power = 1;
         }
+
         public override void Draw()
         {
             Game.Buffer.Graphics.FillEllipse(Brushes.White, Pos.X, Pos.Y, Size.Width, Size.Height);
@@ -21,10 +23,9 @@ namespace Asteroid
 
         public object Clone()
         {
-            // Создаем копию
-            Asteroid asteroid = new Asteroid(new Point(Pos.X, Pos.Y), new Point(Dir.X, Dir.Y), new Size(Size.Width, Size.Height));
+            // Создаем копию астероида
+            Asteroid asteroid = new Asteroid(new Point(Pos.X, Pos.Y), new Point(Dir.X, Dir.Y), new Size(Size.Width, Size.Height)) { Power = Power };
             // Не забываем скопировать новому астероиду Power нашего астероида
-            asteroid.Power = Power;
             return asteroid;
         }
 
@@ -36,10 +37,10 @@ namespace Asteroid
                 {
                     System.Media.SystemSounds.Hand.Play();
 
-                        this.Pos.X = Game.Width;
-                        this.Pos.Y = random.Next(0, Game.Height);
-                        o.Pos.X = 0;
-                        o.Pos.Y = random.Next(0, Game.Height);                
+                    this.Pos.X = Game.Width;
+                    this.Pos.Y = random.Next(0, Game.Height);
+               //     o.Pos.X = 0;
+                //    o.Pos.Y = random.Next(0, Game.Height);                
                 }
                 return true;
             }
@@ -55,6 +56,36 @@ namespace Asteroid
             if (Pos.Y < 0) Dir.Y = -Dir.Y;
             if (Pos.Y > Game.Height) Dir.Y = -Dir.Y;
         }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Asteroid temp)
+            {
+                if (Power > temp.Power)
+                    return 1;
+                if (Power < temp.Power)
+                    return -1;
+                else
+                    return 0;
+            }
+            throw new ArgumentException("Parameter is not а Asteroid!");
+
+        }
+
+        public interface IComparable<T>
+        {
+            int CompareTo(T obj);
+        }
+
+        public int CompareTo(Asteroid obj)
+        {
+            if (Power > obj.Power)
+                return 1;
+            if (Power < obj.Power)
+                return -1;
+            return 0;
+        }
+
     }
 
 }

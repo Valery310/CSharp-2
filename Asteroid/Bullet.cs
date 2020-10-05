@@ -24,8 +24,8 @@ namespace Asteroid
             }
             else
             {
-                Pos.X = 0;
-                Pos.Y = random.Next(0, Game.Width);
+                //Pos.X = 0;
+                //Pos.Y = random.Next(0, Game.Width);
             }
            
         }

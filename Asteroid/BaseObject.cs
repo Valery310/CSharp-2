@@ -9,6 +9,7 @@ namespace Asteroid
         protected Point Dir;
         protected Size Size;
         protected Random random;
+        public delegate void Message();
         protected BaseObject(Point pos, Point dir, Size size)
         {
             random = new Random(Environment.TickCount);
