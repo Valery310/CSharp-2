@@ -10,6 +10,7 @@ namespace Asteroid
     class Asteroid : BaseObject, ICloneable, IComparable, IComparable<Asteroid>
     {
         public int Power { get; set; } = 3;
+        public static int DestroyAsteroid = 0;
 
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
@@ -39,8 +40,9 @@ namespace Asteroid
 
                     this.Pos.X = Game.Width;
                     this.Pos.Y = random.Next(0, Game.Height);
-               //     o.Pos.X = 0;
-                //    o.Pos.Y = random.Next(0, Game.Height);                
+                    OnEventLog(this, new EventMessage("Обнаружено столкновение со снарядом!"));
+                    Die();
+                    DestroyAsteroid++;
                 }
                 return true;
             }
@@ -51,7 +53,7 @@ namespace Asteroid
         {
             Pos.X = Pos.X + Dir.X;
             Pos.Y = Pos.Y + Dir.Y;
-            if (Pos.X < 0) Pos.X = Game.Width;// Dir.X = -Dir.X;
+            if (Pos.X < 0) Pos.X = Game.Width;
             if (Pos.X > Game.Width) Dir.X = -Dir.X;
             if (Pos.Y < 0) Dir.Y = -Dir.Y;
             if (Pos.Y > Game.Height) Dir.Y = -Dir.Y;
@@ -68,6 +70,7 @@ namespace Asteroid
                 else
                     return 0;
             }
+            OnEventLog(this, new EventMessage("Parameter is not а Asteroid!"));
             throw new ArgumentException("Parameter is not а Asteroid!");
 
         }
@@ -84,6 +87,11 @@ namespace Asteroid
             if (Power < obj.Power)
                 return -1;
             return 0;
+        }
+
+        public void Die()
+        {
+            OnEventLog(this, new EventMessage("Астеройд уничтожен!"));         
         }
 
     }

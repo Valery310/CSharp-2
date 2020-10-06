@@ -21,13 +21,7 @@ namespace Asteroid
             if (Pos.X + 3 < Game.Width)
             {
                 Pos.X = Pos.X + 3;
-            }
-            else
-            {
-                //Pos.X = 0;
-                //Pos.Y = random.Next(0, Game.Width);
-            }
-           
+            }       
         }
     }
 }

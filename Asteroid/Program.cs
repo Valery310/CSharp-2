@@ -12,8 +12,8 @@ namespace Asteroid
         {
             Form form = new Form
             {
-                Width = Screen.PrimaryScreen.Bounds.Width,
-                Height = Screen.PrimaryScreen.Bounds.Height
+                Width = 1000,// Screen.PrimaryScreen.Bounds.Width,
+                Height = 1000// Screen.PrimaryScreen.Bounds.Height
             };
 
             try
@@ -23,8 +23,8 @@ namespace Asteroid
             catch (ArgumentOutOfRangeException ex)
             {
                 MessageBox.Show(ex.Message);
-                form.Width = 1000;
-                form.Height = 1000;
+                form.Width = 800;
+                form.Height = 800;
                 Game.Init(form);
             }
             
