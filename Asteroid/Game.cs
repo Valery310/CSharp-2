@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Asteroid
 {
@@ -16,7 +17,7 @@ namespace Asteroid
         public static BaseObject[] _objs;
         public static BaseObject[] starField;
         private static List<Bullet> _bullets;
-        private static Asteroid[] _asteroids;
+        private static List<Asteroid> _asteroids;
         private static Ship _ship;
         private static Timer _timer = new Timer() { Interval = 41 };
         public static Random Rnd = new Random();
@@ -112,44 +113,37 @@ namespace Asteroid
                 _bullet?.Update();
             }
 
-            int medicalKit = Rnd.Next(1,1000000);
-            int r = Rnd.Next(5, 50);
-            if (medical ==null && medicalKit > 20 && medicalKit < 50)
-            {
-                medical = new MedicalKit(new Point(Game.Width, Rnd.Next(0, Game.Height)), new Point(-r / 5, r), new Size(r, r));
-            }
+           
             medical?.Update();
 
-            for (int a = 0; a < _asteroids.Length; a++)
+            for (int a = 0; a < _asteroids.Count; a++)
             {
                 if (_asteroids[a] == null) continue;
                 _asteroids[a]?.Update();
 
-                if (_bullets != null)
-                {
                     for (int _bullet = 0; _bullet < _bullets.Count; _bullet++)
                     {
-                        if (_bullets[_bullet] != null && _asteroids[a] != null && _asteroids[a].Collision(_bullets[_bullet]))
+                        if (_asteroids[a] != null && _asteroids[a].Collision(_bullets[_bullet]))
                         {
-                            System.Media.SystemSounds.Hand.Play();
-                        //    _asteroids[a] = null;
-                            _bullets[_bullet] = null;
-                            continue;
+                             System.Media.SystemSounds.Hand.Play();
+                            _bullets.RemoveAt(_bullet);
+                            _asteroids.RemoveAsteroid(a, Rnd);
+                            _bullet = _bullet > 0 ? _bullet--: _bullet;
+                            a = a > 0 ? --a: a;
                         }
-                        if (_bullets[_bullet]?.Pos.X < -Game.Width)
-                        {
-                            _bullets[_bullet] = null;
-                        }                     
+                    if ( _bullet < _bullets.Count &&!(_bullets[_bullet]?.Pos.X < (Game.Width - 1)))
+                    {
+                        _bullets.RemoveAt(_bullet);
+                        _bullet = _bullet > 0 ? _bullet-- : _bullet;
                     }
-                    if (!_ship.Collision(_asteroids[a]))
+                }
+                    if (_asteroids[a] != null || !_ship.Collision(_asteroids[a]))
                     {
                         continue;
                     }
-                    var rnd = new Random();
-                    _ship?.EnergyLow(rnd.Next(1, 10));
+                    _ship?.EnergyLow(Rnd.Next(1, 10));
                     System.Media.SystemSounds.Asterisk.Play();
                     if (_ship.Energy <= 0) _ship?.Die();
-                }
             }
 
         }
@@ -159,7 +153,7 @@ namespace Asteroid
             GameLog.Invoke(null, new EventMessage("Начало загрузки объектов"));
             _objs = new BaseObject[30];
             _bullets = new List<Bullet>();            
-            _asteroids = new Asteroid[3];
+            _asteroids = new List<Asteroid>(3);
             var rnd = new Random();
 
             for (var i = 0; i < _objs.Length; i++)
@@ -167,19 +161,19 @@ namespace Asteroid
                 int r = rnd.Next(5, 50);
                 _objs[i] = new Star(new Point(1000, rnd.Next(0, Game.Height)), new Point(-r, r), new Size(3, 3));
             }
-            for (var i = 0; i < _asteroids.Length; i++)
+            for (var i = 0; i < _asteroids.Capacity; i++)
             {
                 int r = rnd.Next(5, 50);
-                _asteroids[i] = new Asteroid(new Point(Game.Width, rnd.Next(0, Game.Height)), new Point(-r / 5, r), new Size(r, r));
+                _asteroids.Add(new Asteroid(new Point(Game.Width, rnd.Next(0, Game.Height)), new Point(-r /rnd.Next(3, 8), r/rnd.Next(1, 5)), new Size(r, r)));
             }
 
-            int medicalKit = Rnd.Next(1, 100);
-            int mkr = medicalKit = Rnd.Next(5, 50);
+            //int medicalKit = Rnd.Next(1, 100);
+            //int mkr = medicalKit = Rnd.Next(5, 50);
 
-            if (medicalKit > 20 && medicalKit < 50)
-            {
-                medical = new MedicalKit(new Point(Game.Width, Rnd.Next(0, Game.Height)), new Point(-mkr / 5, mkr), new Size(mkr, mkr));
-            }
+            //if (medicalKit > 20 && medicalKit < 50)
+            //{
+            //    medical = new MedicalKit(new Point(Game.Width, Rnd.Next(0, Game.Height)), new Point(-mkr / 5, mkr), new Size(mkr, mkr));
+            //}
 
             starField = new BaseObject[5000];
             Random random = new Random();

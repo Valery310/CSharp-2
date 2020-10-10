@@ -11,10 +11,12 @@ namespace Asteroid
     {
         public int Power { get; set; } = 3;
         public static int DestroyAsteroid = 0;
+        public static int CreatedAsteroids = 0;
 
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
             Power = 1;
+            CreatedAsteroids++;
         }
 
         public override void Draw()
@@ -91,7 +93,14 @@ namespace Asteroid
 
         public void Die()
         {
-            OnEventLog(this, new EventMessage("Астеройд уничтожен!"));         
+            OnEventLog(this, new EventMessage("Астеройд уничтожен!"));
+
+            int medicalKit = Game.Rnd.Next(1, 100);
+            int r = Game.Rnd.Next(5, 50);
+            if (Game.medical == null && medicalKit > 20 && medicalKit < 50)
+            {
+                Game.medical = new MedicalKit(new Point(Game.Width, Game.Rnd.Next(0, Game.Height)), new Point(-r / 5, r), new Size(r, r));
+            }
         }
 
     }
