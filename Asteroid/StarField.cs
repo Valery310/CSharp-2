@@ -15,7 +15,7 @@ namespace Asteroid
         protected float _Size;
         protected int Width;
         protected int Height;
-        protected static Random random;
+        protected static new Random random;
 
         static StarField() 
         {
@@ -29,8 +29,7 @@ namespace Asteroid
             Height = height;
             _Size = Map(Z, 0, Width, 5, 0);
             X = Map((Pos.X / Z), 0, 1, 0, Width) + Width / 2;
-            Y = Map((Pos.Y / Z), 0, 1, 0, Height) + Height / 2;      
-
+            Y = Map((Pos.Y / Z), 0, 1, 0, Height) + Height / 2;  
         }
 
         public override void Draw()
@@ -43,19 +42,18 @@ namespace Asteroid
             return ((n - start1)/(end1 - start1)) * (end2 - start2) + start2;
         }
 
-        public override void Update() 
+        public override void Update()
         {
-            Z -= 5;
-
-            if (Z < 1)
+            X = X + Dir.X;
+            if (X < -Width)
             {
-                Pos.X = random.Next(-Width, Width);
-                Pos.Y = random.Next(-Height, Height);
-                Z = random.Next(1, Width);
+                X = Game.Width + random.Next(0, 250);
+                Y = Game.Height + random.Next(-Height, Height);
+                int r = random.Next(5, 50);
+                //Dir.X = -r/5;
+                int size = random.Next(1, Width);
+                _Size = Map(size, 0, Width, 5, 0);
             }
-            _Size = Map(Z, 0, Width, 5, 0);
-            X = Map((Pos.X / Z), 0, 1, 0, Width) + Width / 2;
-            Y = Map((Pos.Y / Z), 0, 1, 0, Height) + Height / 2;
         }
     }
 }
