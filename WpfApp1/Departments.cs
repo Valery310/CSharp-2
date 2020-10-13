@@ -19,11 +19,6 @@ namespace WpfApp1
             departments.Add(department);
         }
 
-        public void EditDep(Department department)
-        {
-
-        }
-
         public void RemoveDep(Department department)
         {
             departments.Remove(department);

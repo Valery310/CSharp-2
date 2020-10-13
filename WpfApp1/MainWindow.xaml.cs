@@ -21,16 +21,16 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static event EventHandler<EventArgsError> Error;
+        public static event EventHandler<EventArgsError> Error; //событие на случай ввода некорректных данных
 
         public Departments departments { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             departments = new Departments();
+            tvDepartment.ItemsSource = departments.departments; //привязка списка к контролам
+            cmbxDepartment.ItemsSource = departments.departments;
             Error += MainWindow_Error;
-
-
         }
 
         private void MainWindow_Error(object sender, EventArgsError e)
@@ -38,7 +38,7 @@ namespace WpfApp1
             MessageBox.Show(e.message);
         }
 
-        private void Load_Click(object sender, RoutedEventArgs e)
+        private void Load_Click(object sender, RoutedEventArgs e)//Загрузка тестовых данных
         {
             Department department1 = new Department("ИТ");
             department1.AddEmp(new Employee("Сотрудник ИТ 1", 1000));
@@ -54,16 +54,13 @@ namespace WpfApp1
 
             departments.AddDep(department1);
             departments.AddDep(department2);
-            departments.AddDep(department3);
-
-            tvDepartment.ItemsSource = departments.departments;
-            cmbxDepartment.ItemsSource = departments.departments;
+            departments.AddDep(department3);          
         }
 
-        private void btnSaveEmp_Click(object sender, RoutedEventArgs e)
+        private void btnSaveEmp_Click(object sender, RoutedEventArgs e)//сохранение изменений по сотруднику
         {
             var emp = tvDepartment.SelectedItem as Employee;
-            var dep = tvDepartment.Items.CurrentItem as Department;
+            var dep = emp.Department;
             int salary = 0;
             if (!int.TryParse(tbxSalary.Text, out salary))
             {
@@ -73,7 +70,7 @@ namespace WpfApp1
             {
                 if (string.IsNullOrWhiteSpace(tbxNameEmployee.Text))
                 {
-                    Error(this, new EventArgsError("Введите корректное значение имя!"));
+                    Error(this, new EventArgsError("Введите корректное имя!"));
                 }
                 else
                 {
@@ -83,14 +80,13 @@ namespace WpfApp1
                     }
                     else
                     {
-                        dep?.RemoveEmv(emp);
-                        (cmbxDepartment?.SelectedItem as Department).AddEmp(new Employee(tbxNameEmployee.Text, salary));
+                        emp.EditEmp(tbxNameEmployee.Text, salary, cmbxDepartment?.SelectedItem as Department);
                     }                  
                 }                
             }             
         }
 
-        private void btnSaveDep_Click(object sender, RoutedEventArgs e)
+        private void btnSaveDep_Click(object sender, RoutedEventArgs e)//сохранение изменений по подразделению
         {
             var dep = tvDepartment?.SelectedItem as Department;
             if (!string.IsNullOrWhiteSpace(tbxNameDepartment.Text))
@@ -100,11 +96,10 @@ namespace WpfApp1
             else
             {
                 Error(this, new EventArgsError("Введите имя подразделения!"));
-            }
-            
+            }          
         }
 
-        private void tvDepartment_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void tvDepartment_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)//событие выбора элементов списка
         {
             var temp = sender as TreeView;
             if (temp.SelectedItem is Department)
@@ -113,26 +108,45 @@ namespace WpfApp1
                 gbDep.IsEnabled = true;
                 gbEmp.IsEnabled = false;
                 tbxNameDepartment.Text = temDep.nameOfDepartment;
-                TreeViewItem item = (TreeViewItem)(tvDepartment
-    .ItemContainerGenerator
-    .ContainerFromItem(tvDepartment.SelectedItem));
             }
             if (temp.SelectedItem is Employee)
             {
-                TreeViewItem tvItem = null;
-                tvItem = (TreeViewItem)(tvDepartment
-    .ItemContainerGenerator
-    .ContainerFromItem(tvDepartment.SelectedItem) as TreeViewItem);
-                // string itemHeader = ((HeaderedItemsControl)tvDepartment.SelectedItem).Header.ToString();
-                TreeViewItem item = tvDepartment.SelectedItem as TreeViewItem;
-                var t = item.Header.ToString();
                 var temEmp = temp.SelectedItem as Employee;
                 gbDep.IsEnabled = false;
                 gbEmp.IsEnabled = true;
                 tbxNameEmployee.Text = temEmp.Name;
                 tbxSalary.Text = temEmp.Salary.ToString();
-                cmbxDepartment.SelectedItem = temp.Items.CurrentItem;
+                cmbxDepartment.SelectedItem = temEmp.Department;
             }        
+        }
+
+        private void btnAddEmp_Click(object sender, RoutedEventArgs e)//добавление нового сотрдуника
+        {
+            AddedNode addedNode = new AddedNode();
+            addedNode.cmbxDepartment.ItemsSource = departments.departments;
+            addedNode.Owner = this;
+            addedNode.Show();
+        }
+
+        private void btnAddDep_Click(object sender, RoutedEventArgs e)
+        {
+            AddedDep addedDep = new AddedDep(departments);
+            addedDep.Owner = this;
+            addedDep.Show();
+        }
+
+        private void btnDel_Click(object sender, RoutedEventArgs e)//добавление нового подразделения
+        {
+            if (tvDepartment.SelectedItem is Department)
+            {
+                var temDep = tvDepartment.SelectedItem as Department;
+                departments.RemoveDep(temDep);
+            }
+            if (tvDepartment.SelectedItem is Employee)
+            {
+                var temEmp = tvDepartment.SelectedItem as Employee;
+                temEmp.Department.RemoveEmp(temEmp);
+            }
         }
     }
 }

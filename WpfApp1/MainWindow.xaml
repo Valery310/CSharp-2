@@ -7,9 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="5"></Setter>
-        </Style>
+     
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -35,8 +33,9 @@
         <Button x:Name="Load" Click="Load_Click" VerticalAlignment="Bottom" Margin="5" Grid.Column="0">Загрузить данные</Button>
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="1*"></RowDefinition>
+                <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="2*"></RowDefinition>
             </Grid.RowDefinitions>
             <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Редактирование сотрудника" IsEnabled="False">
                 <WrapPanel Orientation="Vertical">
@@ -70,28 +69,15 @@
                     <Button Width="100" Margin="5" HorizontalAlignment="Left" x:Name="btnSaveDep" Click="btnSaveDep_Click">Сохранить</Button>
                 </WrapPanel>
             </GroupBox>
+            <GroupBox x:Name="gbEditNode" Grid.Row="2" Header="Добавление и удаление записей">
+                <WrapPanel>
+                    <Button x:Name="btnDel" Click="btnDel_Click">Удалить элемент</Button>
+                    <Button x:Name="btnAddEmp" Click="btnAddEmp_Click">Добавить сотрудника</Button>
+                    <Button x:Name="btnAddDep" Click="btnAddDep_Click">Добавить подразделение</Button>
+                </WrapPanel> 
+            </GroupBox>
         </Grid>
         
     </Grid>
 
 </Window>
-
-<!--  <ListBox x:Name="lbDepartment" Margin="5" MinHeight="200">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
-                            <ListBox x:Name="lbEmployee" ItemsSource="{Binding Path=employees}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                                            <TextBlock Text="{Binding Path=Name}"></TextBlock>
-                                            <TextBlock Text="{Binding Path=Salary}"></TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>--> 

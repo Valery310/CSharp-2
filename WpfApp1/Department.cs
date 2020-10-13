@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace WpfApp1
 {
-    public class Department
+    public class Department: INotifyPropertyChanged
     {
+        public string _nameOfDepartment;
         public ObservableCollection<Employee> employees { get; set; }
-        public string nameOfDepartment { get; set; }
+        public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment");} }
 
         public Department(string name) 
         {
@@ -16,17 +19,26 @@ namespace WpfApp1
             employees = new ObservableCollection<Employee>();
         }
 
-        public void AddEmp(Employee employee) 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public void DepEdit(string NewName) 
+        {
+            nameOfDepartment = NewName;
+        }
+
+        public void AddEmp(Employee employee)
+        {
+            employee.Department = this;
             employees.Add(employee);
         }
 
-        public void EditEmp(Employee employee) 
-        {
-            
-        }
-
-        public void RemoveEmv(Employee employee) 
+        public void RemoveEmp(Employee employee) 
         {
             employees.Remove(employee);     
         }
