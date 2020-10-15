@@ -1,0 +1,34 @@
+﻿<Window x:Class="WpfApp1.AddedNode"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="Добавление сотрудника" Height="249" Width="319" ResizeMode="NoResize">
+    <Grid>
+        <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Добавление сотрудника">
+            <WrapPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Style="{StaticResource minWidth}">Подразделение:</TextBlock>
+                    <ComboBox x:Name="cmbxDepartment" ItemsSource="{Binding departments.departments}" Width="150">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Style="{StaticResource minWidth}">Имя:</TextBlock>
+                    <TextBox x:Name="tbxNameEmployee" Width="150"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Style="{StaticResource minWidth}">Зарплата:</TextBlock>
+                    <TextBox x:Name="tbxSalary" Width="150"></TextBox>
+                </StackPanel>
+                <Button Width="100" Margin="5" x:Name="btnSaveEmp" HorizontalAlignment="Left" Click="btnSaveEmp_Click">Сохранить</Button>
+            </WrapPanel>
+        </GroupBox>
+    </Grid>
+</Window>
