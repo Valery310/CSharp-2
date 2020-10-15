@@ -10,8 +10,8 @@
         <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Добавление сотрудника">
             <WrapPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock>Подразделение:</TextBlock>
-                    <ComboBox x:Name="cmbxDepartment" Width="150">
+                    <TextBlock Style="{StaticResource minWidth}">Подразделение:</TextBlock>
+                    <ComboBox x:Name="cmbxDepartment" ItemsSource="{Binding departments.departments}" Width="150">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
@@ -20,11 +20,11 @@
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock>Имя:</TextBlock>
+                    <TextBlock Style="{StaticResource minWidth}">Имя:</TextBlock>
                     <TextBox x:Name="tbxNameEmployee" Width="150"></TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock>Зарплата:</TextBlock>
+                    <TextBlock Style="{StaticResource minWidth}">Зарплата:</TextBlock>
                     <TextBox x:Name="tbxSalary" Width="150"></TextBox>
                 </StackPanel>
                 <Button Width="100" Margin="5" x:Name="btnSaveEmp" HorizontalAlignment="Left" Click="btnSaveEmp_Click">Сохранить</Button>

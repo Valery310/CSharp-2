@@ -33,16 +33,11 @@ namespace WpfApp1
         }
 
         private void btnSaveDep_Click(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(tbxNameDepartment.Text))
+        {                      
+            if (Departments.AddDep(Department.SaveDep(new Department(), tbxNameDepartment.Text)))
             {
-                Departments.AddDep(new Department(tbxNameDepartment.Text));
                 this.Close();
-            }
-            else
-            {
-               Error(this, new EventArgsError("Введите имя подразделения!"));
-            }
+            }              
         }
     }
 }

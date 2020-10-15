@@ -32,32 +32,10 @@ namespace WpfApp1
 
         private void btnSaveEmp_Click(object sender, RoutedEventArgs e)
         {
-            int salary = 0;
-            if (!int.TryParse(tbxSalary.Text, out salary))
+            if (Employee.SaveEmp(new Employee(), tbxNameEmployee.Text, tbxSalary.Text, cmbxDepartment?.SelectedItem as Department))
             {
-                Error(this, new EventArgsError("Введите корректное значение зарплаты!"));
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(tbxNameEmployee.Text))
-                {
-                    Error(this, new EventArgsError("Введите корректное имя!"));
-                }
-                else
-                {
-                    if (cmbxDepartment.SelectedItem == null)
-                    {
-                        Error(this, new EventArgsError("Выберите подразделение!"));
-                    }
-                    else
-                    {
-                        var dep = cmbxDepartment.SelectedItem as Department;
-                            dep.AddEmp(new Employee(tbxNameEmployee.Text, salary));
-                        this.Close();
-
-                    }
-                }
-            }
+                this.Close();
+            }          
         }
     }
 }

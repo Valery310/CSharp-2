@@ -5,17 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Window.Resources>
-     
-    </Window.Resources>
+        Title="MainWindow" MinHeight="450" MinWidth="800" Height="450" Width="800" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-            <TreeView x:Name="tvDepartment" Margin="5,5,5,50" Grid.Column="0" SelectedItemChanged="tvDepartment_SelectedItemChanged">
+        <TreeView x:Name="tvDepartment" ItemsSource="{Binding departments.departments}" Margin="5,5,5,50" Grid.Column="0" SelectedItemChanged="tvDepartment_SelectedItemChanged">
                 <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding Path=employees}">
                     <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
@@ -40,8 +37,8 @@
             <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Редактирование сотрудника" IsEnabled="False">
                 <WrapPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock>Подразделение: </TextBlock>
-                        <ComboBox x:Name="cmbxDepartment" Width="150">
+                        <TextBlock Style="{StaticResource minWidth}">Подразделение:</TextBlock>
+                        <ComboBox x:Name="cmbxDepartment" ItemsSource="{Binding departments.departments}" Width="150">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
@@ -50,11 +47,11 @@
                         </ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock>Имя: </TextBlock>
-                        <TextBox x:Name="tbxNameEmployee" Width="150"></TextBox>
-                    </StackPanel>
+                            <TextBlock Style="{StaticResource minWidth}">Имя:</TextBlock>
+                            <TextBox x:Name="tbxNameEmployee" Width="150"></TextBox>
+                        </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
-                        <TextBlock>Зарплата: </TextBlock>
+                        <TextBlock Style="{StaticResource minWidth}">Зарплата:</TextBlock>
                         <TextBox x:Name="tbxSalary" Width="150"></TextBox>
                     </StackPanel>
                     <Button Width="100" Margin="5" x:Name="btnSaveEmp" HorizontalAlignment="Left" Click="btnSaveEmp_Click">Сохранить</Button>

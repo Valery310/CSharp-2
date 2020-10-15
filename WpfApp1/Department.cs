@@ -7,15 +7,21 @@ using System.Text;
 
 namespace WpfApp1
 {
-    public class Department: INotifyPropertyChanged
+    public class Department : INotifyPropertyChanged
     {
         public string _nameOfDepartment;
         public ObservableCollection<Employee> employees { get; set; }
-        public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment");} }
+        public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment"); } }
+        public static event EventHandler<EventArgsError> Error;
 
-        public Department(string name) 
+        public Department(string name)
         {
             nameOfDepartment = name;
+            employees = new ObservableCollection<Employee>();
+        }
+
+        public Department()
+        {
             employees = new ObservableCollection<Employee>();
         }
 
@@ -27,7 +33,7 @@ namespace WpfApp1
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
-        public void DepEdit(string NewName) 
+        public void DepEdit(string NewName)
         {
             nameOfDepartment = NewName;
         }
@@ -38,9 +44,30 @@ namespace WpfApp1
             employees.Add(employee);
         }
 
-        public void RemoveEmp(Employee employee) 
+        public static void RemoveEmp(Employee employee)
         {
-            employees.Remove(employee);     
+            employee.Department?.employees?.Remove(employee);
+        }
+
+        public static Department SaveDep(Department dep, string name)
+        {
+            if (dep != null)
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    dep.nameOfDepartment = name;
+                    return dep;
+                }
+                else
+                {
+                    Error(dep, new EventArgsError("Введите имя подразделения!"));
+                }
+            }
+            else
+            {
+                Error(dep, new EventArgsError("Подразделение не выбрано!"));
+            }
+            return null;
         }
     }
 }

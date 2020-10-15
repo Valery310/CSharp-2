@@ -28,9 +28,10 @@ namespace WpfApp1
         {
             InitializeComponent();
             departments = new Departments();
-            tvDepartment.ItemsSource = departments.departments; //привязка списка к контролам
-            cmbxDepartment.ItemsSource = departments.departments;
+            this.DataContext = this;//привязка контекста данных
             Error += MainWindow_Error;
+            Employee.Error += MainWindow_Error;
+            Department.Error += MainWindow_Error;
         }
 
         private void MainWindow_Error(object sender, EventArgsError e)
@@ -40,63 +41,25 @@ namespace WpfApp1
 
         private void Load_Click(object sender, RoutedEventArgs e)//Загрузка тестовых данных
         {
-            Department department1 = new Department("ИТ");
-            department1.AddEmp(new Employee("Сотрудник ИТ 1", 1000));
-            department1.AddEmp(new Employee("Сотрудник ИТ 2", 2000));
-            department1.AddEmp(new Employee("Сотрудник ИТ 3", 3000));
-            Department department2 = new Department("УМТС");
-            department2.AddEmp(new Employee("Сотрудник УМТС 1", 4000));
-            department2.AddEmp(new Employee("Сотрудник УМТС 2", 5000));
-            department2.AddEmp(new Employee("Сотрудник УМТС 3", 6000));
-            Department department3 = new Department("Бухгалтерия");
-            department3.AddEmp(new Employee("Сотрудник Бухгалтерия 1", 7000));
-            department3.AddEmp(new Employee("Сотрудник Бухгалтерия 2", 8000));
-
-            departments.AddDep(department1);
-            departments.AddDep(department2);
-            departments.AddDep(department3);          
+            for (int i = 0; i < 10; i++)
+            {
+                Department department = new Department($"Подразделение {i}");
+                for (int q = 0; q < 5; q++)
+                {
+                    department.AddEmp(new Employee($"Сотрудник {q}", q * 1000));
+                }
+                departments.AddDep(department);
+            }                            
         }
 
         private void btnSaveEmp_Click(object sender, RoutedEventArgs e)//сохранение изменений по сотруднику
         {
-            var emp = tvDepartment.SelectedItem as Employee;
-            var dep = emp.Department;
-            int salary = 0;
-            if (!int.TryParse(tbxSalary.Text, out salary))
-            {
-                Error(this, new EventArgsError("Введите корректное значение зарплаты!"));
-            }
-            else
-            {
-                if (string.IsNullOrWhiteSpace(tbxNameEmployee.Text))
-                {
-                    Error(this, new EventArgsError("Введите корректное имя!"));
-                }
-                else
-                {
-                    if (cmbxDepartment.SelectedItem == null)
-                    {
-                        Error(this, new EventArgsError("Выберите подразделение!"));
-                    }
-                    else
-                    {
-                        emp.EditEmp(tbxNameEmployee.Text, salary, cmbxDepartment?.SelectedItem as Department);
-                    }                  
-                }                
-            }             
+            Employee.SaveEmp(tvDepartment?.SelectedItem as Employee, tbxNameEmployee.Text, tbxSalary.Text, cmbxDepartment?.SelectedItem as Department);
         }
 
         private void btnSaveDep_Click(object sender, RoutedEventArgs e)//сохранение изменений по подразделению
         {
-            var dep = tvDepartment?.SelectedItem as Department;
-            if (!string.IsNullOrWhiteSpace(tbxNameDepartment.Text))
-            {
-                dep.nameOfDepartment = tbxNameDepartment.Text;
-            }
-            else
-            {
-                Error(this, new EventArgsError("Введите имя подразделения!"));
-            }          
+            Department.SaveDep(tvDepartment?.SelectedItem as Department, tbxNameDepartment.Text);
         }
 
         private void tvDepartment_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)//событие выбора элементов списка
@@ -123,7 +86,7 @@ namespace WpfApp1
         private void btnAddEmp_Click(object sender, RoutedEventArgs e)//добавление нового сотрдуника
         {
             AddedNode addedNode = new AddedNode();
-            addedNode.cmbxDepartment.ItemsSource = departments.departments;
+            addedNode.DataContext = this;          
             addedNode.Owner = this;
             addedNode.Show();
         }
@@ -135,18 +98,9 @@ namespace WpfApp1
             addedDep.Show();
         }
 
-        private void btnDel_Click(object sender, RoutedEventArgs e)//добавление нового подразделения
+        private void btnDel_Click(object sender, RoutedEventArgs e)//добавление нового подразделения/работника
         {
-            if (tvDepartment.SelectedItem is Department)
-            {
-                var temDep = tvDepartment.SelectedItem as Department;
-                departments.RemoveDep(temDep);
-            }
-            if (tvDepartment.SelectedItem is Employee)
-            {
-                var temEmp = tvDepartment.SelectedItem as Employee;
-                temEmp.Department.RemoveEmp(temEmp);
-            }
+            Departments.AddObj(tvDepartment.SelectedItem, departments);
         }
     }
 }
