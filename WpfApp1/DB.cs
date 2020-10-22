@@ -9,23 +9,50 @@ using WpfApp1.Properties;
 
 namespace WpfApp1
 {
-    class DB
+    public class DB
     {
         SqlConnection connection = new SqlConnection(Settings.Default.connectionString);
-       
-        DB(){ }
+        SqlDataAdapter adapter = new SqlDataAdapter();
+        DataSet dataSet = new DataSet();
 
-        public void FillData() 
+        public DataSet FillData() 
         {
-            string sqlExpression = @"SELECT * FROM Employees, Department
-                                    WHERE Employees.id_department = Department.Id";
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = new SqlCommand(sqlExpression, connection);
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            DataSet dataSet = new DataSet();
+           // string sqlExpression = @"SELECT Employees.FIO, Department.Department FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
+            string sqlEmp = "SELECT * FROM Employees";
+            string sqlDep = "SELECT * FROM Department";
+            
+            adapter.SelectCommand = new SqlCommand(sqlEmp, connection);
+            adapter.FillSchema(dataSet, SchemaType.Source);
+            adapter.Fill(dataSet);
+            adapter.SelectCommand = new SqlCommand(sqlDep, connection);
+            adapter.FillSchema(dataSet, SchemaType.Source);
             adapter.Fill(dataSet);
 
+            return dataSet;
+
+            //DataTable dt = new DataTable();
+            //adapter.Fill(dt);
+            //  connection.CloseAsync();
+
+            //  connection.CloseAsync();
+            //  var t = dataSet;
+            //foreach (DataColumn column in dt.Columns)
+            //    Console.Write("\t{0}", column.ColumnName);
+            //Console.WriteLine();
+            //// перебор всех строк таблицы
+            //foreach (DataRow row in dt.Rows)
+            //{
+            //    // получаем все ячейки строки
+            //    var cells = row.ItemArray;
+            //    foreach (object cell in cells)
+            //        Console.Write("\t{0}", cell);
+            //    Console.WriteLine();
+            //}
+        }
+
+        public void UpdateData() 
+        {
+            adapter.Update(dataSet);
         }
 
         //SqlDataAdapter adapter = new SqlDataAdapter();
@@ -54,12 +81,13 @@ namespace WpfApp1
 
 
 
-
+        #region sql
         private void GetTuples(string sqlExpression) 
         {
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
             SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;
+            connection.Close();
         }
 
         private void GetTuple(string sqlExpression, SqlParameter sqlParameter)
@@ -67,7 +95,7 @@ namespace WpfApp1
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
             command.Parameters.Add(sqlParameter);
-            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;
+            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;           
         }
 
         private void NewTuple(string sqlExpression)
@@ -163,5 +191,6 @@ namespace WpfApp1
         { 
         
         }
+        #endregion sql
     }
 }

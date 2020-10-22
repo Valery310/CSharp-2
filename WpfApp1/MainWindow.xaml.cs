@@ -32,6 +32,11 @@ namespace WpfApp1
             Error += MainWindow_Error;
             Employee.Error += MainWindow_Error;
             Department.Error += MainWindow_Error;
+
+            DB dB = new DB();
+            dB.FillData();
+        //    dB.GetEmployes();
+         //   dB.GetDepartments();
         }
 
         private void MainWindow_Error(object sender, EventArgsError e)
