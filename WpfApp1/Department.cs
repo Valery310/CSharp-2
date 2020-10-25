@@ -9,6 +9,7 @@ namespace WpfApp1
 {
     public class Department : INotifyPropertyChanged
     {
+        public int id { get; set; }
         public string _nameOfDepartment;
         public ObservableCollection<Employee> employees { get; set; }
         public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment"); } }
@@ -22,6 +23,13 @@ namespace WpfApp1
 
         public Department()
         {
+            employees = new ObservableCollection<Employee>();
+        }
+
+        public Department(int _id, string _name)
+        {
+            id = _id;
+            nameOfDepartment = _name;
             employees = new ObservableCollection<Employee>();
         }
 

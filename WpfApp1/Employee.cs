@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Linq;
@@ -9,26 +10,35 @@ namespace WpfApp1
 {
     public class Employee: INotifyPropertyChanged
     {
+        public int id { get; set; }
         public string _Name;
-        public int _Salary;
+        public decimal _Salary;
         public Department _Department;
         public string Name { get { return _Name; } set { _Name = value; OnPropertyChanged("Name"); } }
-        public int Salary { get { return _Salary; } set { _Salary = value; OnPropertyChanged("Salary"); } }
+        public decimal Salary { get { return _Salary; } set { _Salary = value; OnPropertyChanged("Salary"); } }
         public Department Department { get { return _Department; } set { _Department = value; OnPropertyChanged("Department"); } }
         public static event EventHandler<EventArgsError> Error;
 
-        public Employee(string name, int salary, Department department = null)
+        public Employee(string name, decimal salary, Department department = null)
         {
             Name = name; 
             Salary = salary;
             Department = department;
         }
 
+        public Employee(int _id, string _name, Department department, decimal _salary)
+        {
+            Name = _name;
+            Salary = _salary;
+            Department = department;
+            id = _id;
+        }
+
         public Employee()
         {
         }
 
-        public void EditEmp(string name, int salary, Department department = null)
+        public void EditEmp(string name, decimal salary, Department department = null)
         {
             Name = name;
             Salary = salary;
@@ -53,8 +63,8 @@ namespace WpfApp1
         {
             if (emp != null)
             {
-                int _salary = 0;
-                if (!int.TryParse(salary, out _salary))
+                decimal _salary = 0;
+                if (!decimal.TryParse(salary, out _salary))
                 {
                     Error(emp, new EventArgsError("Введите корректное значение зарплаты!"));
                 }

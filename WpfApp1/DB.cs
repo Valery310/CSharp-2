@@ -5,55 +5,77 @@ using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using WpfApp1.Properties;
 
 namespace WpfApp1
 {
-    public class DB
+    public static class DB
     {
-        SqlConnection connection = new SqlConnection(Settings.Default.connectionString);
-        SqlDataAdapter adapter = new SqlDataAdapter();
-        DataSet dataSet = new DataSet();
+        static SqlConnection connection = new SqlConnection(Settings.Default.connectionString);
+        static SqlDataAdapter adapter = new SqlDataAdapter();
+        public static DataSet dataSet = new DataSet();
+        public static DataTable DepDataTable;
+        public static DataTable EmpDataTable;
+        static SqlCommandBuilder commandBuilder;
+        public static DataView RootEmp { get; private set; }
+        public static DataView RootDep { get; private set; }
 
-        public DataSet FillData() 
+        public static DataSet FillData() 
         {
-           // string sqlExpression = @"SELECT Employees.FIO, Department.Department FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
-            string sqlEmp = "SELECT * FROM Employees";
-            string sqlDep = "SELECT * FROM Department";
-            
+            string sqlExpression = @"SELECT * FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
+            string sqlEmp = "SELECT * FROM Employees; SELECT * FROM Department;";
+          //  string sqlDep = "SELECT * FROM Department";           
             adapter.SelectCommand = new SqlCommand(sqlEmp, connection);
-            adapter.FillSchema(dataSet, SchemaType.Source);
+            adapter.FillSchema(dataSet, SchemaType.Mapped);
             adapter.Fill(dataSet);
-            adapter.SelectCommand = new SqlCommand(sqlDep, connection);
-            adapter.FillSchema(dataSet, SchemaType.Source);
-            adapter.Fill(dataSet);
+            //adapter.SelectCommand = new SqlCommand(sqlDep, connection);
+            //adapter.FillSchema(dataSet, SchemaType.Source);
+            //adapter.Fill(dataSet);
+            EmpDataTable = dataSet.Tables[0];           
+            EmpDataTable.TableName = "Employees";
+            //EmpDataTable.Columns[0].ColumnName = "Id";
+            //EmpDataTable.Columns[1].ColumnName = "FIO";
+            //EmpDataTable.Columns[2].ColumnName = "id_department";
+            //EmpDataTable.Columns[3].ColumnName = "Salary";
 
+            DepDataTable = dataSet.Tables[1];
+            DepDataTable.TableName = "Department";
+            //DepDataTable.Columns[0].ColumnName = "Id";
+            //DepDataTable.Columns[1].ColumnName = "Department";
+            RootEmp = new DataView(EmpDataTable);
+            RootDep = new DataView(DepDataTable);
+            dataSet.Relations.Add("DepToEmp", DepDataTable.Columns["Id"], EmpDataTable.Columns["id_department"]);
+            commandBuilder = new SqlCommandBuilder(adapter);
             return dataSet;
-
-            //DataTable dt = new DataTable();
-            //adapter.Fill(dt);
-            //  connection.CloseAsync();
-
-            //  connection.CloseAsync();
-            //  var t = dataSet;
-            //foreach (DataColumn column in dt.Columns)
-            //    Console.Write("\t{0}", column.ColumnName);
-            //Console.WriteLine();
-            //// перебор всех строк таблицы
-            //foreach (DataRow row in dt.Rows)
-            //{
-            //    // получаем все ячейки строки
-            //    var cells = row.ItemArray;
-            //    foreach (object cell in cells)
-            //        Console.Write("\t{0}", cell);
-            //    Console.WriteLine();
-            //}
         }
 
-        public void UpdateData() 
-        {
+        public static void UpdateAllData() 
+        {           
             adapter.Update(dataSet);
+            UpdateData();
         }
+
+        public static void UpdateEmpData()
+        {
+            adapter.Update(EmpDataTable);
+            UpdateData();
+        }
+
+        public static void UpdateDepData()
+        {
+            adapter.Update(DepDataTable);
+            UpdateData();
+        }
+
+        private static void UpdateData() 
+        {
+            dataSet.AcceptChanges();
+            dataSet.Clear();
+            FillData();
+        }
+
+
 
         //SqlDataAdapter adapter = new SqlDataAdapter();
         //SqlCommand command = new SqlCommand("SELECT * FROM People", connection);
@@ -81,7 +103,7 @@ namespace WpfApp1
 
 
 
-        #region sql
+     /*   #region sql
         private void GetTuples(string sqlExpression) 
         {
             connection.Open();
@@ -191,6 +213,6 @@ namespace WpfApp1
         { 
         
         }
-        #endregion sql
+        #endregion sql*/
     }
 }

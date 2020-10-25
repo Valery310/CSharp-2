@@ -27,16 +27,18 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            departments = new Departments();
+            departments = new Departments(DB.FillData());
             this.DataContext = this;//привязка контекста данных
             Error += MainWindow_Error;
             Employee.Error += MainWindow_Error;
             Department.Error += MainWindow_Error;
 
-            DB dB = new DB();
-            dB.FillData();
+
+           // DB dB = new DB();
+          //  DB.FillData();
+            //tvDepartment.ItemsSource = DB.DepDataTable;
         //    dB.GetEmployes();
-         //   dB.GetDepartments();
+        //   dB.GetDepartments();
         }
 
         private void MainWindow_Error(object sender, EventArgsError e)

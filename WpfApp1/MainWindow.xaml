@@ -6,26 +6,34 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="MainWindow" MinHeight="450" MinWidth="800" Height="450" Width="800" >
+ <!--  <Window.Resources>
+      <ObjectDataProvider
+            x:Key="dataSetProvider"
+            MethodName="FillData"
+            ObjectType="{x:Type local:DB}"/>
+        <DataTemplate x:Key="Emp">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding FIO}"></TextBlock>
+                <TextBlock Text="{Binding Salary}"></TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="Dep"
+                                  ItemsSource="{Binding DepToEmp}"
+                                  ItemTemplate="{StaticResource Emp}"
+            >
+            <TextBlock Text="{Binding Department}"/>
+        </HierarchicalDataTemplate>
+
+    </Window.Resources> -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
             <ColumnDefinition Width="3*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TreeView x:Name="tvDepartment" ItemsSource="{Binding departments.departments}" Margin="5,5,5,50" Grid.Column="0" SelectedItemChanged="tvDepartment_SelectedItemChanged">
-                <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=employees}">
-                    <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Path=Name}"></TextBlock>
-                                <TextBlock Text="{Binding Path=Salary}"></TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </HierarchicalDataTemplate.ItemTemplate>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
+      <TreeView x:Name="tvDepartment"  Margin="5,5,5,50" Grid.Column="0" SelectedItemChanged="tvDepartment_SelectedItemChanged">
+              
             </TreeView>
         <Button x:Name="Load" Click="Load_Click" VerticalAlignment="Bottom" Margin="5" Grid.Column="0">Загрузить данные</Button>
         <Grid Grid.Column="1">
