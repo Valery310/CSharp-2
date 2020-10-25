@@ -23,7 +23,7 @@ namespace WpfApp1
 
         public static DataSet FillData() 
         {
-            string sqlExpression = @"SELECT * FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
+           // string sqlExpression = @"SELECT * FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
             string sqlEmp = "SELECT * FROM Employees; SELECT * FROM Department;";
           //  string sqlDep = "SELECT * FROM Department";           
             adapter.SelectCommand = new SqlCommand(sqlEmp, connection);
@@ -50,7 +50,7 @@ namespace WpfApp1
             return dataSet;
         }
 
-        public static void UpdateAllData() 
+      /*  public static void UpdateAllData() 
         {           
             adapter.Update(dataSet);
             UpdateData();
@@ -73,7 +73,7 @@ namespace WpfApp1
             dataSet.AcceptChanges();
             dataSet.Clear();
             FillData();
-        }
+        }*/
 
 
 
