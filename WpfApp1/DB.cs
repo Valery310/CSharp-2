@@ -23,34 +23,27 @@ namespace WpfApp1
 
         public static DataSet FillData() 
         {
-           // string sqlExpression = @"SELECT * FROM Employees INNER JOIN Department ON (Employees.id_department = Department.Id) ORDER BY Employees.FIO ASC, Department.Department ASC;";
             string sqlEmp = "SELECT * FROM Employees; SELECT * FROM Department;";
-          //  string sqlDep = "SELECT * FROM Department";           
+       
             adapter.SelectCommand = new SqlCommand(sqlEmp, connection);
             adapter.FillSchema(dataSet, SchemaType.Mapped);
             adapter.Fill(dataSet);
-            //adapter.SelectCommand = new SqlCommand(sqlDep, connection);
-            //adapter.FillSchema(dataSet, SchemaType.Source);
-            //adapter.Fill(dataSet);
+
             EmpDataTable = dataSet.Tables[0];           
             EmpDataTable.TableName = "Employees";
-            //EmpDataTable.Columns[0].ColumnName = "Id";
-            //EmpDataTable.Columns[1].ColumnName = "FIO";
-            //EmpDataTable.Columns[2].ColumnName = "id_department";
-            //EmpDataTable.Columns[3].ColumnName = "Salary";
+
 
             DepDataTable = dataSet.Tables[1];
             DepDataTable.TableName = "Department";
-            //DepDataTable.Columns[0].ColumnName = "Id";
-            //DepDataTable.Columns[1].ColumnName = "Department";
+
             RootEmp = new DataView(EmpDataTable);
             RootDep = new DataView(DepDataTable);
             dataSet.Relations.Add("DepToEmp", DepDataTable.Columns["Id"], EmpDataTable.Columns["id_department"]);
             commandBuilder = new SqlCommandBuilder(adapter);
             return dataSet;
         }
-
-      /*  public static void UpdateAllData() 
+        
+        public static void UpdateAllData() 
         {           
             adapter.Update(dataSet);
             UpdateData();
@@ -68,151 +61,96 @@ namespace WpfApp1
             UpdateData();
         }
 
-        private static void UpdateData() 
+        public static void UpdateData() 
         {
-            dataSet.AcceptChanges();
             dataSet.Clear();
-            FillData();
-        }*/
-
-
-
-        //SqlDataAdapter adapter = new SqlDataAdapter();
-        //SqlCommand command = new SqlCommand("SELECT * FROM People", connection);
-        //adapter.SelectCommand = command;
-        //        // insert
-        //        command = new SqlCommand(@"INSERT INTO People (FIO, Birthday, Email, Phone) VALUES (@FIO, @Birthday, @Email, @Phone); SET @ID = @@IDENTITY;", connection);
-        //command.Parameters.Add("@FIO", SqlDbType.NVarChar, -1, "FIO");
-        //        command.Parameters.Add("@Birthday", SqlDbType.NVarChar, -1, "Birthday");
-        //        command.Parameters.Add("@Email", SqlDbType.NVarChar, 100, "Email");
-        //        command.Parameters.Add("@Phone", SqlDbType.NVarChar, -1, "Phone");
-        //        SqlParameter param = command.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
-        //param.Direction = ParameterDirection.Output;
-        //        adapter.InsertCommand = command;
-        //        // update
-        //        command = new SqlCommand(@"UPDATE People SET FIO = @FIO, Birthday = @Birthday WHERE ID = @ID", connection);
-        //command.Parameters.Add("@FIO", SqlDbType.NVarChar, -1, "FIO");
-        //        command.Parameters.Add("@Birthday", SqlDbType.NVarChar, -1, "Birthday");
-        //        param = command.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
-        //        param.SourceVersion = DataRowVersion.Original;
-        //        adapter.UpdateCommand = command;
-        //        // delete
-        //        command = new SqlCommand("DELETE FROM People WHERE ID = @ID", connection);
-        //param = command.Parameters.Add("@ID", SqlDbType.Int, 0, "ID");
-        //        param.SourceVersion = DataRowVersion.Original;
-
-
-
-     /*   #region sql
-        private void GetTuples(string sqlExpression) 
-        {
-            connection.Open();
-            SqlCommand command = new SqlCommand(sqlExpression, connection);
-            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;
-            connection.Close();
+            adapter.Fill(dataSet);
         }
 
-        private void GetTuple(string sqlExpression, SqlParameter sqlParameter)
-        {
+        public static void Insert(Employee emp) 
+        {         
+            string sqlExpression = $"INSERT INTO Employees (FIO, id_department, Salary) output INSERTED.ID VALUES ( N'{emp.Name}', '{emp.Department.id}', '{emp.Salary}')";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
-            command.Parameters.Add(sqlParameter);
-            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;           
+            int id = Convert.ToInt32(command.ExecuteScalarAsync().Result);
+            if (id == 0)
+            {
+                MessageBox.Show("Не выполнено.");
+            }
+            else
+            {
+                emp.id = id;
+            }
+            connection.CloseAsync();
         }
 
-        private void NewTuple(string sqlExpression)
+        public static void Insert(Department dep)
         {
+            string sqlExpression = $"INSERT INTO Department (Department) output INSERTED.ID VALUES ( N'{dep.nameOfDepartment}')";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
-            int exec = command.ExecuteNonQueryAsync().Result;
+            int id = Convert.ToInt32(command.ExecuteScalarAsync().Result);
+            if (id == 0)
+            {
+                MessageBox.Show("Не выполнено.");
+            }
+            else
+            {
+                dep.id = id;
+            }
+            connection.CloseAsync();
+        }
+
+        public static void Delete(Employee emp)
+        {
+            string sqlExpression = $"DELETE FROM Employees WHERE Id = '{emp.id}'";
+            connection.Open();
+            SqlCommand command = new SqlCommand(sqlExpression, connection);
+            int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
             if (exec == -1)
             {
                 MessageBox.Show("Не выполнено.");
             }
+            connection.CloseAsync();
         }
 
-        private void EditTuple(string sqlExpression)
+        public static void Delete(Department dep)
         {
+            string sqlExpression = $"DELETE FROM Department WHERE Id = '{dep.id}'";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
-            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;
+            int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
+            if (exec == -1)
+            {
+                MessageBox.Show("Не выполнено.");
+            }
+            connection.CloseAsync();       
         }
 
-        private void DelTuple(string sqlExpression)
+        public static void Edit(Employee emp)
         {
+            string sqlExpression = $"UPDATE Employees SET FIO = ( N'{emp.Name}'), id_department = '{emp.Department.id}', Salary = '{emp.Salary}' WHERE Id = '{emp.id}'";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
-            SqlDataReader reader = command.ExecuteReaderAsync(CommandBehavior.CloseConnection).Result;
+            int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
+            if (exec == -1)
+            {
+                MessageBox.Show("Не выполнено.");
+            }
+            connection.CloseAsync();
         }
 
-        private int GetIDTuples(string sqlExpression) 
+        public static void Edit(Department dep)
         {
+            string sqlExpression = $"UPDATE Department SET Department = ( N'{dep.nameOfDepartment}') WHERE Id = '{dep.id}'";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
-            return Convert.ToInt32(command.ExecuteScalar());
+            int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
+            if (exec == -1)
+            {
+                MessageBox.Show("Не выполнено.");
+            }
+            connection.CloseAsync();
         }
-
-        public void NewEmploye(Employee employee)
-        {
-            string sqlExpression = $"INSERT INTO Employees (FIO, id_department, Salary) VALUES ( N'{employee.Name}', '{GetIDTuples($"SELECT Id FROM Department WHERE Department = {employee.Department.nameOfDepartment}")}','{employee.Salary}')";
-            NewTuple(sqlExpression);
-        }
-
-        public void NewDepartment(Department department)
-        {
-            string sqlExpression = $"INSERT INTO Department (Department) VALUES ( N'{department.nameOfDepartment}')";
-            NewTuple(sqlExpression);
-        }
-
-        public void GetEmployee(Employee employee)
-        {
-            string sqlExpression = "SELECT * FROM Employees WHERE FIO = @Emp";
-            SqlParameter param = new SqlParameter("@Emp", SqlDbType.NVarChar, -1);
-            param.Value = $"{employee.Name}";
-            GetTuple(sqlExpression, param);
-        }
-     
-        public void GetDepartment(Department dep)
-        {
-            string sqlExpression = "SELECT * FROM Department where Department = @Dep";
-            SqlParameter param = new SqlParameter("@Dep", SqlDbType.NVarChar, -1);
-            param.Value = $"{dep.nameOfDepartment}";        
-            GetTuple(sqlExpression, param);
-        }
-      
-        public void GetEmployes() 
-        {          
-            string sqlExpression = "SELECT * FROM Employees";
-            GetTuples(sqlExpression);
-        }
-      
-        public void GetDepartments()
-        {
-            string sqlExpression = "SELECT * FROM Department";
-            GetTuples(sqlExpression);
-        }
-
-
-
-        public void EditEmployee()
-        { 
-        
-        }
-
-        public void EditDepartment()
-        { 
-        
-        }
-
-        public void DelEmploye()
-        {
-        
-        }
-
-        public void DelDepartment()
-        { 
-        
-        }
-        #endregion sql*/
     }
 }

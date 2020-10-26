@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
+using System.Windows;
 
 namespace WpfApp1
 {
@@ -25,24 +27,45 @@ namespace WpfApp1
             }
             catch (Exception ex)
             {
-                Error(this, new EventArgsError(ex.Message));
+                MessageBox.Show(ex.Message);
+             //   Error(this, new EventArgsError(ex.Message));
             }
         }
 
         private void GetData(DataTable dep, DataTable emp)
         {
-            departments.Clear();
-
-            foreach (DataRow d in dep.Rows)
+           
+            try
             {
-                Department department = new Department((int)d[0], (string)d[1]);
-                foreach (DataRow e in emp.Rows)
+                departments.Clear();
+                foreach (DataRow d in dep.Rows)
                 {
-                    Employee employee = new Employee((int)e[0], (string)e[1], department, (decimal)e[3]);
-                    department.AddEmp(employee);
+                    Department department = new Department((int)d[0], (string)d[1]);
+                    var result = from row in emp.AsEnumerable()
+                                 where row.Field<int>("id_department") == d.Field<int>("Id")
+                                 select row;
+                    foreach (DataRow e in result)
+                    {
+                        Decimal c = 0M;
+                        try
+                        {
+                            c = (Decimal)e[3];
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        Employee employee = new Employee((int)e[0], (string)e[1], department, c);
+                        department.AddEmp(employee);
+                    }
+                    departments.Add(department);
                 }
-                departments.Add(department);
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+          
 
         }
 
@@ -51,6 +74,7 @@ namespace WpfApp1
             if (department != null)
             {
                 departments.Add(department);
+                DB.Insert(department);
                 return true;
             }
             return false;
@@ -58,7 +82,10 @@ namespace WpfApp1
 
         public void RemoveDep(Department department)
         {
+            DB.Delete(department);
             departments.Remove(department);
+            department.employees.Clear();
+            department = null;
         }
 
         public static void AddObj(object obj, Departments departments) 

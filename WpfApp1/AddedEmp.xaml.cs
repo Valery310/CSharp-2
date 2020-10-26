@@ -17,22 +17,15 @@ namespace WpfApp1
     /// </summary>
     public partial class AddedNode : Window
     {
-        public static event EventHandler<EventArgsError> Error;
-
         public AddedNode()
         {
             InitializeComponent();
-            Error += MainWindow_Error;
-        }
-
-        private void MainWindow_Error(object sender, EventArgsError e)
-        {
-            MessageBox.Show(e.message);
+            cmbxDepartment.ItemsSource = Presenter.departments.departments;
         }
 
         private void btnSaveEmp_Click(object sender, RoutedEventArgs e)
-        {
-            if (Employee.SaveEmp(new Employee(), tbxNameEmployee.Text, tbxSalary.Text, cmbxDepartment?.SelectedItem as Department))
+        {           
+            if (Presenter.SaveEmployee(null, tbxNameEmployee.Text, tbxSalary.Text, cmbxDepartment?.SelectedItem as Department))
             {
                 this.Close();
             }          

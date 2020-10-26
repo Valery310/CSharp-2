@@ -24,6 +24,7 @@ namespace WpfApp1
             Name = name; 
             Salary = salary;
             Department = department;
+            DB.Insert(this);
         }
 
         public Employee(int _id, string _name, Department department, decimal _salary)
@@ -44,10 +45,12 @@ namespace WpfApp1
             Salary = salary;
             if (department!=null)
             {
-              //  var temp = Department
-                Department.RemoveEmp(this);
+                //  var temp = Department
+                //  Department.RemoveEmp(this);
+                Department.employees.Remove(this);
                 Department = department;
                 Department.AddEmp(this);
+                DB.Edit(this);
             }      
         }
 
@@ -61,8 +64,7 @@ namespace WpfApp1
 
         public static bool SaveEmp(Employee emp, string name, string salary, Department dep) 
         {
-            if (emp != null)
-            {
+            
                 decimal _salary = 0;
                 if (!decimal.TryParse(salary, out _salary))
                 {
@@ -82,16 +84,21 @@ namespace WpfApp1
                         }
                         else
                         {
+                        if (emp != null)
+                        {
                             emp.EditEmp(name, _salary, dep);
-                            return true;
+                        }
+                        else
+                        {
+                            dep.employees.Add(new Employee(name, _salary, dep));                           
+                        }
+                        return true;
                         }
                     }
                 }
-            }
-            else
-            {
-                Error(emp, new EventArgsError("Работник не выбран!"));
-            }
+            
+
+            Error(emp, new EventArgsError("Работник не выбран!"));
             return false;
         }
     }

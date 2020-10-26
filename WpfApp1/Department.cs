@@ -11,14 +11,14 @@ namespace WpfApp1
     {
         public int id { get; set; }
         public string _nameOfDepartment;
-        public ObservableCollection<Employee> employees { get; set; }
+        public ObservableCollection<Employee> employees { get; set; }//= new ObservableCollection<Employee>();
         public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment"); } }
         public static event EventHandler<EventArgsError> Error;
 
-        public Department(string name)
+        public Department(string name):base()
         {
             nameOfDepartment = name;
-            employees = new ObservableCollection<Employee>();
+            employees = new ObservableCollection<Employee>();            
         }
 
         public Department()
@@ -44,6 +44,7 @@ namespace WpfApp1
         public void DepEdit(string NewName)
         {
             nameOfDepartment = NewName;
+            DB.Edit(this);
         }
 
         public void AddEmp(Employee employee)
@@ -53,8 +54,10 @@ namespace WpfApp1
         }
 
         public static void RemoveEmp(Employee employee)
-        {
+        {          
+            DB.Delete(employee);
             employee.Department?.employees?.Remove(employee);
+            employee = null;
         }
 
         public static Department SaveDep(Department dep, string name)
@@ -63,7 +66,7 @@ namespace WpfApp1
             {
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    dep.nameOfDepartment = name;
+                    dep.DepEdit(name);
                     return dep;
                 }
                 else
