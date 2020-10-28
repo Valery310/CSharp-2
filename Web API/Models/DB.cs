@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using WpfApp1.Properties;
+using System.Linq;
+using System.Web;
+using Web_API.Properties;
 
-namespace WpfApp1
+namespace Web_API.Models
 {
     public static class DB
     {
@@ -20,16 +18,17 @@ namespace WpfApp1
         static SqlCommandBuilder commandBuilder;
         public static DataView RootEmp { get; private set; }
         public static DataView RootDep { get; private set; }
+        public static event EventHandler<EventArgsError> Error;
 
-        public static DataSet FillData() 
+        public static DataSet FillData()
         {
             string sqlEmp = "SELECT * FROM Employees; SELECT * FROM Department;";
-       
+
             adapter.SelectCommand = new SqlCommand(sqlEmp, connection);
             adapter.FillSchema(dataSet, SchemaType.Mapped);
             adapter.Fill(dataSet);
 
-            EmpDataTable = dataSet.Tables[0];           
+            EmpDataTable = dataSet.Tables[0];
             EmpDataTable.TableName = "Employees";
 
 
@@ -42,9 +41,9 @@ namespace WpfApp1
             commandBuilder = new SqlCommandBuilder(adapter);
             return dataSet;
         }
-        
-        public static void UpdateAllData() 
-        {           
+
+        public static void UpdateAllData()
+        {
             adapter.Update(dataSet);
             UpdateData();
         }
@@ -61,27 +60,27 @@ namespace WpfApp1
             UpdateData();
         }
 
-        public static void UpdateData() 
+        public static void UpdateData()
         {
             dataSet.Clear();
             adapter.Fill(dataSet);
         }
 
-        public static void Insert(Employee emp) 
-        {         
+        public static void Insert(Employee emp)
+        {
             string sqlExpression = $"INSERT INTO Employees (FIO, id_department, Salary) output INSERTED.ID VALUES ( N'{emp.Name}', '{emp.Department.id}', '{emp.Salary}')";
             connection.Open();
             SqlCommand command = new SqlCommand(sqlExpression, connection);
             int id = Convert.ToInt32(command.ExecuteScalarAsync().Result);
             if (id == 0)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(emp, new EventArgsError("Не выполнено."));
             }
             else
             {
                 emp.id = id;
             }
-            connection.CloseAsync();
+            connection.Close();
         }
 
         public static void Insert(Department dep)
@@ -92,13 +91,13 @@ namespace WpfApp1
             int id = Convert.ToInt32(command.ExecuteScalarAsync().Result);
             if (id == 0)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(dep, new EventArgsError("Не выполнено."));
             }
             else
             {
                 dep.id = id;
             }
-            connection.CloseAsync();
+            connection.Close();
         }
 
         public static void Delete(Employee emp)
@@ -109,9 +108,9 @@ namespace WpfApp1
             int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
             if (exec == -1)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(emp, new EventArgsError("Не выполнено."));
             }
-            connection.CloseAsync();
+            connection.Close();
         }
 
         public static void Delete(Department dep)
@@ -122,9 +121,9 @@ namespace WpfApp1
             int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
             if (exec == -1)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(dep, new EventArgsError("Не выполнено."));
             }
-            connection.CloseAsync();       
+            connection.Close();
         }
 
         public static void Edit(Employee emp)
@@ -135,9 +134,9 @@ namespace WpfApp1
             int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
             if (exec == -1)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(emp, new EventArgsError("Не выполнено."));
             }
-            connection.CloseAsync();
+            connection.Close();
         }
 
         public static void Edit(Department dep)
@@ -148,9 +147,9 @@ namespace WpfApp1
             int exec = Convert.ToInt32(command.ExecuteNonQueryAsync().Result);
             if (exec == -1)
             {
-                MessageBox.Show("Не выполнено.");
+                Error(dep, new EventArgsError("Не выполнено."));
             }
-            connection.CloseAsync();
+            connection.Close();
         }
     }
 }

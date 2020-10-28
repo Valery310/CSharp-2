@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
+using System.Web;
 
-namespace WpfApp1
+namespace Web_API.Models
 {
     [DataContract(IsReference = true)]
     public class Department : INotifyPropertyChanged
@@ -21,10 +22,10 @@ namespace WpfApp1
         public string nameOfDepartment { get { return _nameOfDepartment; } set { _nameOfDepartment = value; OnPropertyChanged("nameOfDepartment"); } }
         public static event EventHandler<EventArgsError> Error;
 
-        public Department(string name):base()
+        public Department(string name) : base()
         {
             nameOfDepartment = name;
-            employees = new ObservableCollection<Employee>();            
+            employees = new ObservableCollection<Employee>();
         }
 
         public Department()
@@ -50,7 +51,7 @@ namespace WpfApp1
         public void DepEdit(string NewName)
         {
             nameOfDepartment = NewName;
-          //  DB.Edit(this);
+            DB.Edit(this);
         }
 
         public void AddEmp(Employee employee)
@@ -60,8 +61,8 @@ namespace WpfApp1
         }
 
         public static void RemoveEmp(Employee employee)
-        {          
-            //DB.Delete(employee);
+        {
+            DB.Delete(employee);
             employee.Department?.employees?.Remove(employee);
             employee = null;
         }

@@ -14,26 +14,11 @@ namespace WpfApp1
         {
             InitializeComponent();        
             this.DataContext = this;//привязка контекста данных 
-          
-            Presenter.Load();
-            tvDepartment.ItemsSource = Presenter.departments.departments;
-            cmbxDepartment.ItemsSource = Presenter.departments.departments;
-
         }
        
         private void Load_Click(object sender, RoutedEventArgs e)//Загрузка данных
         {
             Presenter.LoadData();                        
-        }
-
-        private void btnSaveEmp_Click(object sender, RoutedEventArgs e)//сохранение изменений по сотруднику
-        {
-            Presenter.SaveEmployee(tvDepartment?.SelectedItem as Employee, tbxNameEmployee.Text, tbxSalary.Text, cmbxDepartment?.SelectedItem as Department);
-        }
-
-        private void btnSaveDep_Click(object sender, RoutedEventArgs e)//сохранение изменений по подразделению
-        {
-            Department.SaveDep(tvDepartment?.SelectedItem as Department, tbxNameDepartment.Text);
         }
 
         private void tvDepartment_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)//событие выбора элементов списка
@@ -53,23 +38,19 @@ namespace WpfApp1
                 gbEmp.IsEnabled = true;
                 tbxNameEmployee.Text = temEmp.Name;
                 tbxSalary.Text = temEmp.Salary.ToString();
-                cmbxDepartment.SelectedItem = temEmp.Department;
+                txtblckDepartment.Text = temEmp.Department.nameOfDepartment;
             }        
         }
 
-        private void btnAddEmp_Click(object sender, RoutedEventArgs e)//добавление нового сотрдуника
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Presenter.AddedEmployee(this);
+            Presenter.Loading += Presenter_Loading;
+            Presenter.Load();
         }
 
-        private void btnAddDep_Click(object sender, RoutedEventArgs e)
+        private void Presenter_Loading()
         {
-            Presenter.AddedDepartment(this);
-        }
-
-        private void btnDel_Click(object sender, RoutedEventArgs e)//добавление нового подразделения/работника
-        {
-            Presenter.Delete(tvDepartment.SelectedItem);
+            tvDepartment.ItemsSource = Presenter.departments.departments;
         }
     }
 }

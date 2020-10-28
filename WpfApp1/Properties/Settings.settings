@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="connectionString" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = Employee; Integrated Security = True</Value>
+      <Value Profile="(Default)">http://localhost:63303/</Value>
     </Setting>
   </Settings>
 </SettingsFile>

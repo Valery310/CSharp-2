@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" MinHeight="450" MinWidth="800" Height="450" Width="800">
+        Title="MainWindow" MinHeight="450" MinWidth="800" Height="450" Width="800" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"></ColumnDefinition>
@@ -34,44 +34,32 @@
                 <RowDefinition Height="3*"></RowDefinition>
                 <RowDefinition Height="2*"></RowDefinition>
             </Grid.RowDefinitions>
-            <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Редактирование сотрудника" IsEnabled="False">
+            <GroupBox x:Name="gbEmp" Grid.Row="0" Header="Данные о сотруднике" IsEnabled="False">
                 <WrapPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock Style="{StaticResource minWidth}">Подразделение:</TextBlock>
-                        <ComboBox x:Name="cmbxDepartment" ItemsSource="{Binding departments.departments}" Width="150">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Path=nameOfDepartment}"></TextBlock>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                        <TextBlock x:Name="txtblckDepartment"  Width="150"></TextBlock>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                             <TextBlock Style="{StaticResource minWidth}">Имя:</TextBlock>
-                            <TextBox x:Name="tbxNameEmployee" Width="150"></TextBox>
+                            <TextBlock x:Name="tbxNameEmployee" Width="150"></TextBlock>
                         </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock Style="{StaticResource minWidth}">Зарплата:</TextBlock>
-                        <TextBox x:Name="tbxSalary" Width="150"></TextBox>
+                        <TextBlock x:Name="tbxSalary" Width="150"></TextBlock>
                     </StackPanel>
-                    <Button Width="100" Margin="5" x:Name="btnSaveEmp" HorizontalAlignment="Left" Click="btnSaveEmp_Click">Сохранить</Button>
                 </WrapPanel>
             </GroupBox>
-            <GroupBox x:Name="gbDep" Grid.Row="1" Header="Редактирование подразделения" IsEnabled="False">
+            <GroupBox x:Name="gbDep" Grid.Row="1" Header="Данные о подразделении" IsEnabled="False">
                 <WrapPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <TextBlock>Название подразделения: </TextBlock>
-                        <TextBox x:Name="tbxNameDepartment" Width="150"></TextBox>
+                        <TextBlock x:Name="tbxNameDepartment" Width="150"></TextBlock>
                     </StackPanel>
-                    <Button Width="100" Margin="5" HorizontalAlignment="Left" x:Name="btnSaveDep" Click="btnSaveDep_Click">Сохранить</Button>
                 </WrapPanel>
             </GroupBox>
             <GroupBox x:Name="gbEditNode" Grid.Row="2" Header="Добавление и удаление записей">
-                <WrapPanel>
-                    <Button x:Name="btnDel" Click="btnDel_Click">Удалить элемент</Button>
-                    <Button x:Name="btnAddEmp" Click="btnAddEmp_Click">Добавить сотрудника</Button>
-                    <Button x:Name="btnAddDep" Click="btnAddDep_Click">Добавить подразделение</Button>
-                </WrapPanel> 
+                <WrapPanel/>
             </GroupBox>
         </Grid>
         

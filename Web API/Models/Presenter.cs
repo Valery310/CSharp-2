@@ -1,37 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+using System.Linq;
+using System.Web;
 
-namespace WpfApp1
+namespace Web_API.Models
 {
     public static class Presenter
     {
         public static event EventHandler<EventArgsError> Error; //событие на случай ввода некорректных данных
-        public delegate void LoadingHandler();
-        public static event LoadingHandler Loading;
         public static Departments departments { get; set; }
 
-        public async static void Load()
+        public static void Load()
         {
-            WebAPI.InitUri();
-            departments = await WebAPI.GetDepatments();
+            departments = new Departments(DB.FillData());
             Error += MainWindow_Error;
             Employee.Error += MainWindow_Error;
             Department.Error += MainWindow_Error;
-            Loading();
+        }
+
+        public static Departments GetDepartments()
+        {
+            if (departments == null)
+            {
+                Load();
+            }
+            return departments;
         }
 
         private static void MainWindow_Error(object sender, EventArgsError e)
         {
-            MessageBox.Show(e.message);
+            Error(sender, new EventArgsError(e.message));
         }
 
-        public async static void LoadData()
+        public static void LoadData()
         {
-            departments = null;
-            departments = await WebAPI.GetDepatments();
-            Loading();
+            DB.UpdateData();
         }
 
         public static bool SaveEmployee(Employee emp, string name, string salary, Department dep)
@@ -39,7 +42,22 @@ namespace WpfApp1
             return Employee.SaveEmp(emp, name, salary, dep);
         }
 
-        public static void Delete(object obj) 
+        //public static void AddedEmployee(Window window)
+        //{
+        //    AddedNode addedNode = new AddedNode();
+        //    addedNode.DataContext = window;
+        //    addedNode.Owner = window;
+        //    addedNode.Show();
+        //}
+
+        //public static void AddedDepartment(Window window)
+        //{
+        //    AddedDep addedDep = new AddedDep();
+        //    addedDep.Owner = window;
+        //    addedDep.Show();
+        //}
+
+        public static void Delete(object obj)
         {
             Departments.AddObj(obj, departments);
         }

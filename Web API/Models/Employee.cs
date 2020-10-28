@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Xml.Linq;
+using System.Web;
 
-namespace WpfApp1
+namespace Web_API.Models
 {
-    //[DataContract(IsReference = true)]
-    public class Employee: INotifyPropertyChanged
+   // [DataContract(IsReference = true)]
+    public class Employee : INotifyPropertyChanged
     {
         [DataMember]
         public int id { get; set; }
@@ -30,10 +29,10 @@ namespace WpfApp1
 
         public Employee(string name, decimal salary, Department department = null)
         {
-            Name = name; 
+            Name = name;
             Salary = salary;
             Department = department;
-            //DB.Insert(this);
+            DB.Insert(this);
         }
 
         public Employee(int _id, string _name, Department department, decimal _salary)
@@ -52,15 +51,15 @@ namespace WpfApp1
         {
             Name = name;
             Salary = salary;
-            if (department!=null)
+            if (department != null)
             {
                 //  var temp = Department
                 //  Department.RemoveEmp(this);
                 Department.employees.Remove(this);
                 Department = department;
                 Department.AddEmp(this);
-                //DB.Edit(this);
-            }      
+                DB.Edit(this);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -71,41 +70,41 @@ namespace WpfApp1
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
-        public static bool SaveEmp(Employee emp, string name, string salary, Department dep) 
+        public static bool SaveEmp(Employee emp, string name, string salary, Department dep)
         {
-            
-                decimal _salary = 0;
-                if (!decimal.TryParse(salary, out _salary))
+
+            decimal _salary = 0;
+            if (!decimal.TryParse(salary, out _salary))
+            {
+                Error(emp, new EventArgsError("Введите корректное значение зарплаты!"));
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(name))
                 {
-                    Error(emp, new EventArgsError("Введите корректное значение зарплаты!"));
+                    Error(emp, new EventArgsError("Введите корректное имя!"));
                 }
                 else
                 {
-                    if (string.IsNullOrWhiteSpace(name))
+                    if (dep == null)
                     {
-                        Error(emp, new EventArgsError("Введите корректное имя!"));
+                        Error(emp, new EventArgsError("Выберите подразделение!"));
                     }
                     else
                     {
-                        if (dep == null)
-                        {
-                            Error(emp, new EventArgsError("Выберите подразделение!"));
-                        }
-                        else
-                        {
                         if (emp != null)
                         {
                             emp.EditEmp(name, _salary, dep);
                         }
                         else
                         {
-                            dep.employees.Add(new Employee(name, _salary, dep));                           
+                            dep.employees.Add(new Employee(name, _salary, dep));
                         }
                         return true;
-                        }
                     }
                 }
-            
+            }
+
 
             Error(emp, new EventArgsError("Работник не выбран!"));
             return false;

@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Windows;
+using System.Runtime.Serialization;
+using System.Web;
 
-namespace WpfApp1
+namespace Web_API.Models
 {
     public class Departments
-    {
+    {        
         public ObservableCollection<Department> departments { get; set; }
         public static event EventHandler<EventArgsError> Error;
 
@@ -23,18 +23,17 @@ namespace WpfApp1
             departments = new ObservableCollection<Department>();
             try
             {
-               GetData(dataset.Tables["Department"], dataset.Tables["Employees"]);    
+                GetData(dataset.Tables["Department"], dataset.Tables["Employees"]);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-             //   Error(this, new EventArgsError(ex.Message));
+               Error(this, new EventArgsError(ex.Message));
             }
         }
 
         private void GetData(DataTable dep, DataTable emp)
         {
-           
+
             try
             {
                 departments.Clear();
@@ -53,7 +52,7 @@ namespace WpfApp1
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.Message);
+                            Error(this, new EventArgsError(ex.Message));
                         }
                         Employee employee = new Employee((int)e[0], (string)e[1], department, c);
                         department.AddEmp(employee);
@@ -63,9 +62,9 @@ namespace WpfApp1
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Error(this, new EventArgsError(ex.Message));
             }
-          
+
 
         }
 
@@ -74,7 +73,7 @@ namespace WpfApp1
             if (department != null)
             {
                 departments.Add(department);
-                //DB.Insert(department);
+                DB.Insert(department);
                 return true;
             }
             return false;
@@ -82,13 +81,13 @@ namespace WpfApp1
 
         public void RemoveDep(Department department)
         {
-            //DB.Delete(department);
+            DB.Delete(department);
             departments.Remove(department);
             department.employees.Clear();
             department = null;
         }
 
-        public static void AddObj(object obj, Departments departments) 
+        public static void AddObj(object obj, Departments departments)
         {
             if (obj is Department)
             {

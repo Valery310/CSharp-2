@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WpfApp1.Properties {
+namespace Web_API.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -23,15 +23,13 @@ namespace WpfApp1.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:63303/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Employee; Integrated Secu" +
+            "rity = True")]
         public string connectionString {
             get {
                 return ((string)(this["connectionString"]));
-            }
-            set {
-                this["connectionString"] = value;
             }
         }
     }
